@@ -16,6 +16,7 @@ When a crash happens, the helper will show the information it was able to gather
 I have more ideas for the future, but they will require a separate companion app connected to the game. If you have any suggestions, do let me know!
 
 Code: https://github.com/Lord-G-INC/CrashHelper/
+
 Riivolution Patch (injection address 0x80001800): https://pastebin.com/kh3LZgBq
 
 *This patch is available via SyatiManager.*
