@@ -36,7 +36,8 @@ enum SRR0ExactDebugMsg {
     INVALID_BPK,
     INVALID_BVA,
     INVALID_ANIMATION,
-    INVALID_AREA_SHAPE
+    INVALID_AREA_SHAPE,
+    MISSING_MODEL
 };
 
 struct SRR0ExactDebugMsgPair {

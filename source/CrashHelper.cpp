@@ -45,7 +45,8 @@ static SRR0ExactDebugMsgPair gExactDebugMsgEntries[] = {
 	{ 0x8023BB98, INVALID_BPK },
 	{ 0x8023BBD4, INVALID_BVA },
 	{ 0x800693A4, INVALID_ANIMATION },
-	{ 0x80070AB4, INVALID_AREA_SHAPE }
+	{ 0x80070AB4, INVALID_AREA_SHAPE },
+	{ 0x80232230, MISSING_MODEL }
 };
 const s32 gExactDebugMsgEntriesCount = sizeof(gExactDebugMsgEntries) / sizeof(SRR0ExactDebugMsgPair);
 
@@ -419,11 +420,11 @@ bool reportGetJMapInfoArgNoInitBOOL (const JMapInfoIter &rIter, const char *pArg
 	s32 dest;
 	const bool result = rIter.getValue<s32>(pArgName, &dest);
 	if (&rIter == gCurrentIter) 
-		OSReport("* Getting %s = %s (bool, %s)\n", pArgName, dest == -1 ? "true" : "false", result ? "success" : "fail");
+		OSReport("* Getting %s = %s (bool, %s)\n", pArgName, dest == -1 ? "false" : "true", result ? "success" : "fail");
 	if (result && dest == -1) {
 		*pDest = false;
 		return true;
-	} else if (result && dest == 0) {
+	} else if (result) {
 		*pDest = true;
 		return true;
 	}
@@ -658,9 +659,13 @@ void reportCrash (JUTConsole *pConsole, const char *pFormatter, u32 srr0, u32 sr
 					OSReport("An Area tried to use an invalid area shape.\nMake sure your Areas use valid Shape IDs.\n");
 					pConsole->print_f("An Area tried to use an invalid area shape.\nMake sure your Areas use valid Shape IDs.\n");
 					break;
+				case MISSING_MODEL:
+					OSReport("A Model cannot be found.\nMake sure the model name matches the object name.\nIf you are using InitActor.bcsv: Ensure that the\n\"Model\" row name matches with the model file name.\n");
+					pConsole->print_f("A Model cannot be found.\nMake sure the model name matches the object name.\nIf you are using InitActor.bcsv: Ensure that the\n\"Model\" row name matches with the model file name.");
+					break;
 			}
 		} else {
-			for (s32 i = 0; i < gExactDebugMsgEntriesCount; i++) {
+			for (s32 i = 0; i < gRangeDebugMsgEntriesCount; i++) {
 				SRR0RangeDebugMsgPair pair = gRangeDebugMsgEntries[i];
 				if (srr0 >= pair.srr0Start && srr0 < pair.srr0End) {
 					msgId = pair.msgId;
@@ -1038,8 +1043,8 @@ void reportCrash (JUTConsole *pConsole, const char *pFormatter, u32 srr0, u32 sr
 						pConsole->print_f("[This crash is related to the HOME menu]\n");
 						break;
 				}
-				OSReport("\n[To get more information, look up the SRR0 and LR Save addresses.]\n");
-				pConsole->print_f("\n[To get more information, look up the SRR0\nand LR Save addresses.]\n");
+				OSReport("[To get more information, look up the SRR0 and LR Save addresses.]\n");
+				pConsole->print_f("[To get more information, look up the SRR0\nand LR Save addresses.]\n");
 			} else {
 				OSReport("[The SRR0 is unknown]\n");
 				pConsole->print_f("[The SRR0 is unknown]\n");
