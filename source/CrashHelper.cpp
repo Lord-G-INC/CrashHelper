@@ -345,7 +345,8 @@ static SRR0RangeDebugMsgPair gRangeDebugMsgEntries[] = {
 	{ 0x80440710, 0x80440FE0, TAMAKORO },
 	{ 0x804442D0, 0x80448F60, TAMAKORO },
 	{ 0x8044B940, 0x80451340, TUBE_SLIDING },
-	{ 0x80474B60, 0x804755D0, HOME }
+	{ 0x80474B60, 0x804755D0, HOME },
+	{ 0x807F0000, 0, CUSTOM_CODE }
 };
 const s32 gRangeDebugMsgEntriesCount = sizeof(gRangeDebugMsgEntries) / sizeof(SRR0RangeDebugMsgPair);
 
@@ -667,7 +668,7 @@ void reportCrash (JUTConsole *pConsole, const char *pFormatter, u32 srr0, u32 sr
 		} else {
 			for (s32 i = 0; i < gRangeDebugMsgEntriesCount; i++) {
 				SRR0RangeDebugMsgPair pair = gRangeDebugMsgEntries[i];
-				if (srr0 >= pair.srr0Start && srr0 < pair.srr0End) {
+				if (srr0 >= pair.srr0Start && (pair.srr0End == 0 || srr0 < pair.srr0End)) {
 					msgId = pair.msgId;
 					break;
 				}
@@ -1042,6 +1043,10 @@ void reportCrash (JUTConsole *pConsole, const char *pFormatter, u32 srr0, u32 sr
 						OSReport("[This crash is related to the HOME menu]\n");
 						pConsole->print_f("[This crash is related to the HOME menu]\n");
 						break;
+					case CUSTOM_CODE:
+						OSReport("[This crash is related to Custom Code]\n");
+						pConsole->print_f("[This crash is related to Custom Code]\n");
+						break;
 				}
 				OSReport("[To get more information, look up the SRR0 and LR Save addresses.]\n");
 				pConsole->print_f("[To get more information, look up the SRR0\nand LR Save addresses.]\n");
@@ -1054,7 +1059,11 @@ void reportCrash (JUTConsole *pConsole, const char *pFormatter, u32 srr0, u32 sr
 	OSReport("(SRR0: %X)\n", srr0);
 	pConsole->print("--------------------------------------------------");
 }
-kmCall(0x8050FE2C, reportCrash);
+#if defined(PAL) || defined(USA) || defined(JPN)
+    kmBranch(0x8050FE2C, reportCrash);
+#elif defined(TWN) || defined(KOR)
+    kmBranch(0x8050FEBC, reportCrash);
+#endif
 
 extern "C" {
 	void __ptmf_scall();

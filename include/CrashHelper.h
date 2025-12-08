@@ -137,7 +137,8 @@ enum SRR0RangeDebugMsg {
     GLI_BIRD,
     TAMAKORO,
     TUBE_SLIDING,
-    HOME
+    HOME,
+    CUSTOM_CODE
 };
 
 struct SRR0RangeDebugMsgPair {
